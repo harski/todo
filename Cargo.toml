@@ -1,0 +1,8 @@
+[package]
+
+name = "todo"
+version = "0.0.1"
+authors = [ "Tuomo Hartikainen <tth@harski.org>" ]
+
+[dependencies]
+getopts = "0.2"
