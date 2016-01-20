@@ -16,8 +16,8 @@ const LICENSE_STR: &'static str =
      Licensed under the 2-clause BSD license, see LICENSE for details.";
 
 enum Action {
+    Dump,
     Help,
-    Todo,
     Version,
 }
 
@@ -31,14 +31,18 @@ fn main() {
     let action = get_action(&args);
 
     match action {
-        Action::Help    => { print_help(&program, &opts); return; },
-        Action::Version => { print_version(); return; },
-        Action::Todo    => {},
+        Action::Help    => { print_help(&program, &opts); },
+        Action::Version => { print_version(); },
+        Action::Dump    => { let path = Path::new(".");
+                             dump(path);
+                           },
     }
+}
 
+
+fn dump(path: &Path) {
     let mut files: Vec<PathBuf> = Vec::new();
-    let dir = Path::new(".");
-    match get_files_in_dir(&dir, &mut files) {
+    match get_files_in_dir(&path, &mut files) {
         Ok(()) => (),
         Err(err) => panic!("Error reading todo files: {}", err),
     }
@@ -80,7 +84,7 @@ fn get_action(args: &Vec<String>) -> Action {
             None     => { panic!("Error reading action argument"); },
         }
     } else {
-        Action::Todo
+        Action::Dump
     }
 }
 
