@@ -24,7 +24,7 @@ impl Opt {
             Some(path) => path,
             None => { panic!("Could not get home dir"); },
 		};
-		todo_dir.push("/.todo/");
+		todo_dir.push(".todo/");
 
         Opt {
 			debug: false,

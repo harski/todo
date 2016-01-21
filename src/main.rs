@@ -42,9 +42,7 @@ fn main() {
     match action {
         Action::Help    => { print_help(&program, &opts_in); },
         Action::Version => { print_version(); },
-        Action::Dump    => { let path = Path::new(".");
-                             dump(path);
-                           },
+        Action::Dump    => { dump(opts.todo_dir.as_path()); },
     }
 }
 
@@ -53,7 +51,7 @@ fn dump(path: &Path) {
     let mut files: Vec<PathBuf> = Vec::new();
     match get_files_in_dir(&path, &mut files) {
         Ok(()) => (),
-        Err(err) => panic!("Error reading todo files: {}", err),
+        Err(err) => panic!("Error reading todo files from {:?}: {}", path, err),
     }
 
     for file in files {
