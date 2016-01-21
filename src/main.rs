@@ -25,13 +25,13 @@ fn main() {
     // TODO: Parse options
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
-    let mut opts = Options::new();
-    get_opt_strs(&mut opts);
+    let mut opts_in = Options::new();
+    get_opt_strs(&mut opts_in);
 
-    let action = get_action(&args);
+    let action = get_action(&opts_in, &args);
 
     match action {
-        Action::Help    => { print_help(&program, &opts); },
+        Action::Help    => { print_help(&program, &opts_in); },
         Action::Version => { print_version(); },
         Action::Dump    => { let path = Path::new(".");
                              dump(path);
@@ -55,11 +55,7 @@ fn dump(path: &Path) {
 }
 
 
-fn get_action(args: &Vec<String>) -> Action {
-    let mut opts = Options::new();
-    opts.optflag("h", "help", "print this help");
-    opts.optflag("v", "version", "show version");
-
+fn get_action(opts: &Options, args: &Vec<String>) -> Action {
     let matches = match opts.parse(&args[1..]) {
         Ok(m)   => { m }
         Err(f)  => { panic!(f.to_string()) }
