@@ -10,6 +10,9 @@ use std::path::{Path, PathBuf};
 mod file_utils;
 use ::file_utils::get_files_in_dir;
 
+mod opt;
+use ::opt::Opt;
+
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const LICENSE_STR: &'static str =
     "Copyright 2016 Tuomo Hartikainen <tth@harski.org>.\n\
@@ -22,11 +25,17 @@ enum Action {
 }
 
 fn main() {
-    // TODO: Parse options
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
     let mut opts_in = Options::new();
     get_opt_strs(&mut opts_in);
+
+    let mut opts: Opt = Opt::new();
+    parse_options(&args, &opts_in, &mut opts);
+
+    if opts.debug {
+        opts.dump();
+    }
 
     let action = get_action(&opts_in, &args);
 
@@ -86,8 +95,21 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
 
 
 fn get_opt_strs(opts: &mut Options) {
+    opts.optflag("d", "debug", "set debug mode");
     opts.optflag("h", "help", "print this help");
     opts.optflag("v", "version", "show version");
+}
+
+
+fn parse_options(args: &Vec<String>, opts_in: &Options, opts: &mut Opt) {
+    let matches = match opts_in.parse(&args[1..]) {
+        Ok(m)   => { m }
+        Err(f)  => { panic!(f.to_string()) }
+    };
+
+    if matches.opt_present("d") {
+        opts.debug = true;
+    }
 }
 
 
