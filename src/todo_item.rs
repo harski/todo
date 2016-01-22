@@ -29,7 +29,13 @@ impl TodoItem {
         let mut line_it = contents.lines();
 
         let heading = match line_it.next() {
-            Some(line)  => line,
+            Some(line)  => {
+                if line.trim().len() > 0 {
+                    line
+                } else {
+                    return Err(Error::new(ErrorKind::Other, "Heading empty"))
+                }
+            },
             None        => return Err(Error::new(ErrorKind::Other, "Heading not found")),
         };
         Ok(TodoItem::new(&filename, &heading))
