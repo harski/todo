@@ -13,6 +13,12 @@ use ::file_utils::get_files_in_dir;
 mod opt;
 use ::opt::Opt;
 
+mod todo_item;
+use ::todo_item::TodoItem;
+
+#[macro_use]
+mod util;
+
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const LICENSE_STR: &'static str =
     "Copyright 2016 Tuomo Hartikainen <tth@harski.org>.\n\
@@ -55,9 +61,13 @@ fn dump(path: &Path) {
     }
 
     for file in files {
-        if let Some(fname) = file.to_str() {
-            println!("Found file '{}'", fname);
-        }
+        match TodoItem::new_from_file(file.as_path()) {
+            Ok(ti)  => {
+                println!("file: {}", ti.filename);
+                println!("heading: {}", ti.heading);
+            },
+            Err(err)=> print_err!("Could not init Todo item from {:?}: {}", file, err),
+        };
     }
 }
 
