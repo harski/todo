@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::{Error, ErrorKind, Read};
 use std::path::Path;
 
+#[derive(Debug)]
 pub struct TodoItem {
     pub filename:   String,
     pub heading:    String,

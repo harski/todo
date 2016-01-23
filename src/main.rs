@@ -63,8 +63,7 @@ fn dump(path: &Path) {
     for file in files {
         match TodoItem::new_from_file(file.as_path()) {
             Ok(ti)  => {
-                println!("file: {}", ti.filename);
-                println!("heading: {}", ti.heading);
+                println!("{:?}", ti);
             },
             Err(err)=> print_err!("Could not init Todo item from {:?}: {}", file, err),
         };
