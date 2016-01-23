@@ -13,15 +13,17 @@ pub struct TodoItem {
     pub filename:   String,
     pub heading:    String,
     pub attrs:      Vec<Attr>,
+    pub body:       String,
 }
 
 
 impl TodoItem {
-    pub fn new(filename: &str, heading: &str, attrs: Vec<Attr>) -> TodoItem {
+    pub fn new(filename: &str, heading: &str, attrs: Vec<Attr>, body: &str) -> TodoItem {
         TodoItem {
             filename:   filename.to_string(),
             heading:    heading.to_string(),
             attrs:      attrs,
+            body:       body.to_string(),
         }
     }
 
@@ -34,6 +36,7 @@ impl TodoItem {
 
         let mut line_it = contents.lines();
 
+        // get heading
         let heading = match line_it.next() {
             Some(line)  => {
                 if line.trim().len() > 0 {
@@ -45,6 +48,7 @@ impl TodoItem {
             None        => return Err(Error::new(ErrorKind::Other, "Heading not found")),
         };
 
+        // get attributes
         let mut attrs = Vec::new();
         while let Some(line) = line_it.next() {
             // check if line is body separator
@@ -58,6 +62,12 @@ impl TodoItem {
             };
         }
 
-        Ok(TodoItem::new(&filename, &heading, attrs))
+        let mut body = String::new();
+        // get body
+        while let Some(line) = line_it.next() {
+            body = body + line + "\n";
+        }
+
+        Ok(TodoItem::new(&filename, &heading, attrs, body.trim()))
     }
 }
