@@ -7,17 +7,20 @@ use getopts::Options;
 use std::env;
 use std::path::{Path, PathBuf};
 
+// keep macros up here to be able to use them in submodules
+#[macro_use]
+mod util;
+
 mod file_utils;
 use ::file_utils::get_files_in_dir;
+
+mod attr;
 
 mod opt;
 use ::opt::Opt;
 
 mod todo_item;
 use ::todo_item::TodoItem;
-
-#[macro_use]
-mod util;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const LICENSE_STR: &'static str =

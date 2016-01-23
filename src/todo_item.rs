@@ -5,18 +5,23 @@ use std::fs::File;
 use std::io::{Error, ErrorKind, Read};
 use std::path::Path;
 
+use attr::Attr;
+
+
 #[derive(Debug)]
 pub struct TodoItem {
     pub filename:   String,
     pub heading:    String,
+    pub attrs:      Vec<Attr>,
 }
 
 
 impl TodoItem {
-    pub fn new(filename: &str, heading: &str) -> TodoItem {
+    pub fn new(filename: &str, heading: &str, attrs: Vec<Attr>) -> TodoItem {
         TodoItem {
-            filename: filename.to_string(),
-            heading: heading.to_string(),
+            filename:   filename.to_string(),
+            heading:    heading.to_string(),
+            attrs:      attrs,
         }
     }
 
@@ -39,6 +44,20 @@ impl TodoItem {
             },
             None        => return Err(Error::new(ErrorKind::Other, "Heading not found")),
         };
-        Ok(TodoItem::new(&filename, &heading))
+
+        let mut attrs = Vec::new();
+        while let Some(line) = line_it.next() {
+            // check if line is body separator
+            if line.len() == 0 {
+                break;
+            }
+
+            match Attr::new_from_line(line) {
+                Ok(attr)    => { attrs.push(attr); },
+                Err(err)    => { print_err!("{}", err); },
+            };
+        }
+
+        Ok(TodoItem::new(&filename, &heading, attrs))
     }
 }

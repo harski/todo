@@ -1,7 +1,6 @@
 // Copyright 2016 Tuomo Hartikainen <tth@harski.org>.
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
-#[macro_export]
 macro_rules! print_err {
 	($($arg:tt)*) => (
 		{
