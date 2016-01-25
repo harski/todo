@@ -1,12 +1,14 @@
 // Copyright 2016 Tuomo Hartikainen <tth@harski.org>.
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
-use std::io;
 use std::fs;
+use std::io;
 use std::path::{Path, PathBuf};
+use todo_item::TodoItem;
 
 
-pub fn get_files_in_dir(dir: &Path, files: &mut Vec<PathBuf>) -> io::Result<()> {
+pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
+    let mut files = Vec::new();
     // get file list
     if try!(fs::metadata(dir)).is_dir() {
         for entry in fs::read_dir(dir).unwrap() {
@@ -19,5 +21,19 @@ pub fn get_files_in_dir(dir: &Path, files: &mut Vec<PathBuf>) -> io::Result<()> 
             }
         }
     }
-    Ok(())
+    Ok(files)
+}
+
+
+pub fn get_todo_items(path: &Path) -> io::Result<Vec<TodoItem>> {
+    let mut items: Vec<TodoItem> = Vec::new();
+    let files = try!(get_files_in_dir(path));
+    for file in files {
+        match TodoItem::new_from_file(&file) {
+            Ok(i)   => items.push(i),
+            Err(err)=> print_err!("Could not load todo file '{:?}': {}", file, err),
+        };
+    };
+
+    Ok(items)
 }

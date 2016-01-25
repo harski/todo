@@ -3,24 +3,21 @@
 
 extern crate getopts;
 
-use getopts::Options;
-use std::env;
-use std::path::{Path, PathBuf};
-
 // keep macros up here to be able to use them in submodules
 #[macro_use]
 mod util;
 
-mod file_utils;
-use ::file_utils::get_files_in_dir;
-
 mod attr;
-
 mod opt;
-use ::opt::Opt;
-
 mod todo_item;
-use ::todo_item::TodoItem;
+mod todo_items;
+
+use getopts::Options;
+use std::env;
+use std::path::Path;
+
+use opt::Opt;
+use todo_items::get_todo_items;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const LICENSE_STR: &'static str =
@@ -49,27 +46,21 @@ fn main() {
     let action = get_action(&opts_in, &args);
 
     match action {
+        Action::Dump    => { dump(opts.todo_dir.as_path()); },
         Action::Help    => { print_help(&program, &opts_in); },
         Action::Version => { print_version(); },
-        Action::Dump    => { dump(opts.todo_dir.as_path()); },
     }
 }
 
 
 fn dump(path: &Path) {
-    let mut files: Vec<PathBuf> = Vec::new();
-    match get_files_in_dir(&path, &mut files) {
-        Ok(()) => (),
-        Err(err) => panic!("Error reading todo files from {:?}: {}", path, err),
-    }
+    let items = match get_todo_items(&path) {
+        Ok(items) => items,
+        Err(err)  => panic!("Error reading todo files from {:?}: {}", path, err),
+    };
 
-    for file in files {
-        match TodoItem::new_from_file(file.as_path()) {
-            Ok(ti)  => {
-                println!("{:?}", ti);
-            },
-            Err(err)=> print_err!("Could not init Todo item from {:?}: {}", file, err),
-        };
+    for item in items {
+        println!("{:?}", item);
     }
 }
 
