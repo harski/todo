@@ -133,10 +133,25 @@ fn print_today(path: &Path) {
         Ok(items)   => items,
         Err(err)    => panic!("Error reading todo files: {}", err),
     };
-    let todays = filter_todays_items(&items);
+    let todays = match filter_todays_items(&items) {
+        Ok(todos)   => todos,
+        Err(err)    => {
+            println!("Error filtering todays items: {}", err);
+            return
+        },
+    };
 
+    let mut first = true;
     for item in todays {
-        println!("{:?}", item);
+        match first {
+            true    => first = false,
+            false   => println!(""),
+        };
+
+        println!("{}", item.heading);
+        for attr in &item.attrs {
+            println!("{}: {}", attr.key, attr.value);
+        }
     }
 }
 
