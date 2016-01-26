@@ -15,9 +15,10 @@ mod todo_items;
 
 use getopts::Options;
 use std::env;
-use std::path::Path;
+use std::rc::Rc;
 
 use opt::Opt;
+use todo_item::TodoItem;
 use todo_items::{filter_todays_items, get_todo_items};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -47,21 +48,28 @@ fn main() {
 
     let action = get_action(&opts_in, &args);
 
+    // "trivial" actions, always return
     match action {
-        Action::Dump    => { dump(opts.todo_dir.as_path()); },
-        Action::Help    => { print_help(&program, &opts_in); },
-        Action::Today   => { print_today(opts.todo_dir.as_path()); },
-        Action::Version => { print_version(); },
+        Action::Help    => { print_help(&program, &opts_in); return; },
+        Action::Version => { print_version(); return },
+        _               => { },
     }
+
+    // "proper" actions
+    match get_todo_items(opts.todo_dir.as_path()) {
+        Ok(items)   => {
+            match action {
+                Action::Dump    => { dump(&items); },
+                Action::Today   => { print_today(&items); },
+                _               => {},
+            }
+        },
+        Err(err)    => print_err!("Could not parse todo items: {}", err),
+    };
 }
 
 
-fn dump(path: &Path) {
-    let items = match get_todo_items(&path) {
-        Ok(items) => items,
-        Err(err)  => panic!("Error reading todo files from {:?}: {}", path, err),
-    };
-
+fn dump(items: &Vec<Rc<TodoItem>>) {
     for item in items {
         println!("{:?}", item);
     }
@@ -128,11 +136,7 @@ fn print_help(program: &str, opts: &Options) {
 }
 
 
-fn print_today(path: &Path) {
-    let items = match get_todo_items(&path) {
-        Ok(items)   => items,
-        Err(err)    => panic!("Error reading todo files: {}", err),
-    };
+fn print_today(items: &Vec<Rc<TodoItem>>) {
     let todays = match filter_todays_items(&items) {
         Ok(todos)   => todos,
         Err(err)    => {
