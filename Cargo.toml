@@ -6,3 +6,4 @@ authors = [ "Tuomo Hartikainen <tth@harski.org>" ]
 
 [dependencies]
 getopts = "0.2"
+time	= "0.1"

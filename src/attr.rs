@@ -4,10 +4,10 @@
 
 use std::io::{Error, ErrorKind};
 
-#[derive(Debug)]
+#[derive(Clone,Debug)]
 pub struct Attr {
-    key:    String,
-    value:  String,
+    pub key:    String,
+    pub value:  String,
 }
 
 

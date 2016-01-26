@@ -8,7 +8,7 @@ use std::path::Path;
 use attr::Attr;
 
 
-#[derive(Debug)]
+#[derive(Clone,Debug)]
 pub struct TodoItem {
     pub filename:   String,
     pub heading:    String,
@@ -69,5 +69,15 @@ impl TodoItem {
         }
 
         Ok(TodoItem::new(&filename, &heading, attrs, body.trim()))
+    }
+
+
+    pub fn get_date(&self) -> Option<&String> {
+        for attr in &self.attrs {
+            if attr.key.eq("date") {
+                return Some(&attr.value)
+            }
+        }
+        None
     }
 }

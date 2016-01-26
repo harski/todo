@@ -2,6 +2,7 @@
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
 extern crate getopts;
+extern crate time;
 
 // keep macros up here to be able to use them in submodules
 #[macro_use]
@@ -17,7 +18,7 @@ use std::env;
 use std::path::Path;
 
 use opt::Opt;
-use todo_items::get_todo_items;
+use todo_items::{filter_todays_items, get_todo_items};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const LICENSE_STR: &'static str =
@@ -27,6 +28,7 @@ const LICENSE_STR: &'static str =
 enum Action {
     Dump,
     Help,
+    Today,
     Version,
 }
 
@@ -48,6 +50,7 @@ fn main() {
     match action {
         Action::Dump    => { dump(opts.todo_dir.as_path()); },
         Action::Help    => { print_help(&program, &opts_in); },
+        Action::Today   => { print_today(opts.todo_dir.as_path()); },
         Action::Version => { print_version(); },
     }
 }
@@ -72,6 +75,11 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
     };
 
     let mut action_matches: Vec<Action> = Vec::new();
+
+    if matches.opt_present("d") {
+        action_matches.push(Action::Dump);
+    }
+
     if matches.opt_present("h") {
         action_matches.push(Action::Help);
     }
@@ -90,7 +98,7 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
             None     => { panic!("Error reading action argument"); },
         }
     } else {
-        Action::Dump
+        Action::Today
     }
 }
 
@@ -117,6 +125,19 @@ fn parse_options(args: &Vec<String>, opts_in: &Options, opts: &mut Opt) {
 fn print_help(program: &str, opts: &Options) {
     let brief = format!("Usage: {} [ACTION]", program);
     print!("{}", opts.usage(&brief));
+}
+
+
+fn print_today(path: &Path) {
+    let items = match get_todo_items(&path) {
+        Ok(items)   => items,
+        Err(err)    => panic!("Error reading todo files: {}", err),
+    };
+    let todays = filter_todays_items(&items);
+
+    for item in todays {
+        println!("{:?}", item);
+    }
 }
 
 
