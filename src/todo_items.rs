@@ -5,34 +5,23 @@ use std::fs;
 use std::io;
 use std::rc::Rc;
 use std::path::{Path, PathBuf};
-use time;
 use todo_item::TodoItem;
 
 
-pub fn filter_todays_items(items: &Vec<Rc<TodoItem>>)
-                           -> Result<Vec<Rc<TodoItem>>, time::ParseError> {
-    let date_today = try!(get_date_today());
+pub fn filter_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
+                            -> Vec<Rc<TodoItem>> {
     let mut today: Vec<Rc<TodoItem>> = Vec::new();
     for item in items {
         match item.get_date() {
             Some(d) => {
-                if d.eq(&date_today) {
+                if d.eq(&date_str) {
                     today.push(item.clone());
                 }
             },
             None    => {},
         };
     }
-    Ok(today)
-}
-
-
-fn get_date_today() -> Result<String, time::ParseError> {
-    let now = time::now();
-    match time::strftime("%Y-%m-%d", &now) {
-        Ok(d_str)   => Ok(d_str),
-        Err(err)    => Err(err),
-    }
+    today
 }
 
 

@@ -19,7 +19,7 @@ use std::rc::Rc;
 
 use opt::Opt;
 use todo_item::TodoItem;
-use todo_items::{filter_todays_items, get_todo_items};
+use todo_items::{filter_items_on_date, get_todo_items};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const LICENSE_STR: &'static str =
@@ -111,6 +111,15 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
 }
 
 
+fn get_date_today() -> Result<String, time::ParseError> {
+    let now = time::now();
+    match time::strftime("%Y-%m-%d", &now) {
+        Ok(d_str)   => Ok(d_str),
+        Err(err)    => Err(err),
+    }
+}
+
+
 fn get_opt_strs(opts: &mut Options) {
     opts.optflag("d", "debug", "set debug mode");
     opts.optflag("h", "help", "print this help");
@@ -137,13 +146,15 @@ fn print_help(program: &str, opts: &Options) {
 
 
 fn print_today(items: &Vec<Rc<TodoItem>>) {
-    let todays = match filter_todays_items(&items) {
-        Ok(todos)   => todos,
+    let today_str = match get_date_today() {
+        Ok(date)    => date,
         Err(err)    => {
-            println!("Error filtering todays items: {}", err);
-            return
+            print_err!("Could not get today's date: {}", err);
+            return;
         },
     };
+
+    let todays = filter_items_on_date(&items, &today_str);
 
     let mut first = true;
     for item in todays {
