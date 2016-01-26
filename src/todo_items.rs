@@ -3,14 +3,16 @@
 
 use std::fs;
 use std::io;
+use std::rc::Rc;
 use std::path::{Path, PathBuf};
 use time;
 use todo_item::TodoItem;
 
 
-pub fn filter_todays_items(items: &Vec<TodoItem>) -> Result<Vec<TodoItem>, time::ParseError> {
+pub fn filter_todays_items(items: &Vec<Rc<TodoItem>>)
+                           -> Result<Vec<Rc<TodoItem>>, time::ParseError> {
     let date_today = try!(get_date_today());
-    let mut today: Vec<TodoItem> = Vec::new();
+    let mut today: Vec<Rc<TodoItem>> = Vec::new();
     for item in items {
         match item.get_date() {
             Some(d) => {
@@ -52,12 +54,12 @@ pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
 }
 
 
-pub fn get_todo_items(path: &Path) -> io::Result<Vec<TodoItem>> {
-    let mut items: Vec<TodoItem> = Vec::new();
+pub fn get_todo_items(path: &Path) -> io::Result<Vec<Rc<TodoItem>>> {
+    let mut items: Vec<Rc<TodoItem>> = Vec::new();
     let files = try!(get_files_in_dir(path));
     for file in files {
         match TodoItem::new_from_file(&file) {
-            Ok(i)   => items.push(i),
+            Ok(i)   => items.push(Rc::new(i)),
             Err(err)=> print_err!("Could not load todo file '{:?}': {}", file, err),
         };
     };
