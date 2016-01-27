@@ -46,8 +46,8 @@ pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
 pub fn get_todo_items(path: &Path) -> io::Result<Vec<Rc<TodoItem>>> {
     let mut items: Vec<Rc<TodoItem>> = Vec::new();
     let files = try!(get_files_in_dir(path));
-    for file in files {
-        match TodoItem::new_from_file(&file) {
+    for (id, file) in (1..).zip(files.iter()) {
+        match TodoItem::new_from_file(&file, id) {
             Ok(i)   => items.push(Rc::new(i)),
             Err(err)=> print_err!("Could not load todo file '{:?}': {}", file, err),
         };

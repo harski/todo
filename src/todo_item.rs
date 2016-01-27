@@ -12,23 +12,25 @@ use attr::Attr;
 pub struct TodoItem {
     pub filename:   String,
     pub heading:    String,
+    pub id:         i32,
     pub attrs:      Vec<Attr>,
     pub body:       String,
 }
 
 
 impl TodoItem {
-    pub fn new(filename: &str, heading: &str, attrs: Vec<Attr>, body: &str) -> TodoItem {
+    pub fn new(filename: &str, id: i32, heading: &str, attrs: Vec<Attr>, body: &str) -> TodoItem {
         TodoItem {
             filename:   filename.to_string(),
             heading:    heading.to_string(),
+            id:         id,
             attrs:      attrs,
             body:       body.to_string(),
         }
     }
 
 
-    pub fn new_from_file(file: &Path) -> Result<TodoItem, Error> {
+    pub fn new_from_file(file: &Path, id: i32) -> Result<TodoItem, Error> {
         let filename = file.to_str().unwrap();
         let mut fd = try!(File::open(file));
         let mut contents = String::new();
@@ -68,7 +70,7 @@ impl TodoItem {
             body = body + line + "\n";
         }
 
-        Ok(TodoItem::new(&filename, &heading, attrs, body.trim()))
+        Ok(TodoItem::new(&filename, id, &heading, attrs, body.trim()))
     }
 
 
