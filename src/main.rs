@@ -36,11 +36,8 @@ enum Action {
 fn main() {
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
-    let mut opts_in = Options::new();
-    get_opt_strs(&mut opts_in);
-
-    let mut opts: Opt = Opt::new();
-    parse_options(&args, &opts_in, &mut opts);
+    let opts_in: Options = get_options();
+    let opts: Opt = parse_options(&args, &opts_in);
 
     if opts.debug {
         opts.dump();
@@ -84,6 +81,7 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
 
     let mut action_matches: Vec<Action> = Vec::new();
 
+    // check for trivial actions (given as options)
     if matches.opt_present("d") {
         action_matches.push(Action::Dump);
     }
@@ -95,6 +93,8 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
     if matches.opt_present("v") {
         action_matches.push(Action::Version);
     }
+
+    // check for proper actions
 
     // TODO: handle with `match`?
     if action_matches.len() > 1 {
@@ -120,14 +120,17 @@ fn get_date_today() -> Result<String, time::ParseError> {
 }
 
 
-fn get_opt_strs(opts: &mut Options) {
+fn get_options() -> Options {
+    let mut opts = Options::new();
     opts.optflag("d", "debug", "set debug mode");
     opts.optflag("h", "help", "print this help");
     opts.optflag("v", "version", "show version");
+    opts
 }
 
 
-fn parse_options(args: &Vec<String>, opts_in: &Options, opts: &mut Opt) {
+fn parse_options(args: &Vec<String>, opts_in: &Options) -> Opt {
+    let mut opts: Opt = Opt::new();
     let matches = match opts_in.parse(&args[1..]) {
         Ok(m)   => { m }
         Err(f)  => { panic!(f.to_string()) }
@@ -136,6 +139,7 @@ fn parse_options(args: &Vec<String>, opts_in: &Options, opts: &mut Opt) {
     if matches.opt_present("d") {
         opts.debug = true;
     }
+    opts
 }
 
 
