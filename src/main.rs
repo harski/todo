@@ -82,10 +82,6 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
     let mut action_matches: Vec<Action> = Vec::new();
 
     // check for trivial actions (given as options)
-    if matches.opt_present("d") {
-        action_matches.push(Action::Dump);
-    }
-
     if matches.opt_present("h") {
         action_matches.push(Action::Help);
     }
@@ -95,10 +91,12 @@ fn get_action(opts: &Options, args: &Vec<String>) -> Action {
     }
 
     // check for proper actions
+    get_proper_actions(&args, &mut action_matches);
 
     // TODO: handle with `match`?
     if action_matches.len() > 1 {
         // error, too many actions found
+        // TODO: elaborate which actions
         panic!("Error: too many actions supplied. Quitting");
     } else if action_matches.len() == 1 {
         match action_matches.pop() {
@@ -146,6 +144,18 @@ fn parse_options(args: &Vec<String>, opts_in: &Options) -> Opt {
 fn print_help(program: &str, opts: &Options) {
     let brief = format!("Usage: {} [ACTION]", program);
     print!("{}", opts.usage(&brief));
+}
+
+
+fn get_proper_actions(args: &Vec<String>, actions: &mut Vec<Action>)
+{
+    for arg in args {
+        match arg as &str {
+            "dump"  => { actions.push(Action::Dump); },
+            "today" => { actions.push(Action::Today); },
+            _       => {},
+        }
+    }
 }
 
 
