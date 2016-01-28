@@ -7,9 +7,10 @@ extern crate time;
 // keep macros up here to be able to use them in submodules
 #[macro_use]
 mod util;
-
+mod action;
 mod attr;
 mod opt;
+mod optutil;
 mod todo_item;
 mod todo_items;
 
@@ -17,6 +18,7 @@ use getopts::Options;
 use std::env;
 use std::rc::Rc;
 
+use action::Action;
 use opt::Opt;
 use todo_item::TodoItem;
 use todo_items::{filter_items_on_date, get_todo_items};
@@ -26,24 +28,17 @@ const LICENSE_STR: &'static str =
     "Copyright 2016 Tuomo Hartikainen <tth@harski.org>.\n\
      Licensed under the 2-clause BSD license, see LICENSE for details.";
 
-enum Action {
-    Dump,
-    Help,
-    Today,
-    Version,
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
-    let opts_in: Options = get_options();
-    let opts: Opt = parse_options(&args, &opts_in);
+    let opts_in: Options = optutil::get_options();
+    let opts: Opt = optutil::parse_options(&args, &opts_in);
 
     if opts.debug {
         opts.dump();
     }
 
-    let action = get_action(&opts_in, &args);
+    let action = optutil::get_action(&opts_in, &args);
 
     // "trivial" actions, always return
     match action {
@@ -73,42 +68,6 @@ fn dump(items: &Vec<Rc<TodoItem>>) {
 }
 
 
-fn get_action(opts: &Options, args: &Vec<String>) -> Action {
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m)   => { m }
-        Err(f)  => { panic!(f.to_string()) }
-    };
-
-    let mut action_matches: Vec<Action> = Vec::new();
-
-    // check for trivial actions (given as options)
-    if matches.opt_present("h") {
-        action_matches.push(Action::Help);
-    }
-
-    if matches.opt_present("v") {
-        action_matches.push(Action::Version);
-    }
-
-    // check for proper actions
-    get_proper_actions(&args, &mut action_matches);
-
-    // TODO: handle with `match`?
-    if action_matches.len() > 1 {
-        // error, too many actions found
-        // TODO: elaborate which actions
-        panic!("Error: too many actions supplied. Quitting");
-    } else if action_matches.len() == 1 {
-        match action_matches.pop() {
-            Some(ac) => ac,
-            None     => { panic!("Error reading action argument"); },
-        }
-    } else {
-        Action::Today
-    }
-}
-
-
 fn get_date_today() -> Result<String, time::ParseError> {
     let now = time::now();
     match time::strftime("%Y-%m-%d", &now) {
@@ -118,44 +77,9 @@ fn get_date_today() -> Result<String, time::ParseError> {
 }
 
 
-fn get_options() -> Options {
-    let mut opts = Options::new();
-    opts.optflag("d", "debug", "set debug mode");
-    opts.optflag("h", "help", "print this help");
-    opts.optflag("v", "version", "show version");
-    opts
-}
-
-
-fn parse_options(args: &Vec<String>, opts_in: &Options) -> Opt {
-    let mut opts: Opt = Opt::new();
-    let matches = match opts_in.parse(&args[1..]) {
-        Ok(m)   => { m }
-        Err(f)  => { panic!(f.to_string()) }
-    };
-
-    if matches.opt_present("d") {
-        opts.debug = true;
-    }
-    opts
-}
-
-
 fn print_help(program: &str, opts: &Options) {
     let brief = format!("Usage: {} [ACTION]", program);
     print!("{}", opts.usage(&brief));
-}
-
-
-fn get_proper_actions(args: &Vec<String>, actions: &mut Vec<Action>)
-{
-    for arg in args {
-        match arg as &str {
-            "dump"  => { actions.push(Action::Dump); },
-            "today" => { actions.push(Action::Today); },
-            _       => {},
-        }
-    }
 }
 
 
