@@ -3,27 +3,28 @@
 
 PREFIX=/usr/local
 TARGET=todo
-#FLAGS="--release"
+DEBUG_BIN=target/debug/${TARGET}
+RELEASE_BIN=target/release/${TARGET}
 
 all: debug
 
 install: release
-	cp $< ${PREFIX}/${TARGET}
+	cp ${RELEASE_BIN} ${PREFIX}/bin/${TARGET}
 
-target/release/${TARGET}:
+${RELEASE_BIN}:
 	cargo build --release
 
-target/debug/${TARGET}:
+${DEBUG_BIN}:
 	cargo build
 
-release: target/release/${TARGET}
+release: ${RELEASE_BIN}
 
-debug: target/debug/${TARGET}
+debug: ${DEBUG_BIN}
 
 clean:
-	rm -rf target/debug/${TARGET} target/release/${TARGET}
+	rm -rf ${DEBUG_BIN} ${RELEASE_BIN}
 
-run: target/debug/${TARGET}
+run: ${DEBUG_BIN}
 	cargo run
 
 .PHONY: clean debug install release run
