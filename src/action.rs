@@ -56,17 +56,21 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
 
     let todays = todo_items::filter_items_on_date(&items, &today_str);
 
-    let mut first = true;
-    for item in todays {
-        match first {
-            true    => first = false,
-            false   => println!(""),
-        };
+    if todays.len() > 0 {
+        let mut first = true;
+        for item in todays {
+            match first {
+                true    => first = false,
+                false   => println!(""),
+            };
 
-        println!("{}", item.heading);
-        for attr in &item.attrs {
-            println!("{}: {}", attr.key, attr.value);
+            println!("{}", item.heading);
+            for attr in &item.attrs {
+                println!("{}: {}", attr.key, attr.value);
+            }
         }
+    } else {
+        println!("Nothing to do today :)");
     }
 }
 
