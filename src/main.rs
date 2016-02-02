@@ -2,6 +2,7 @@
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
 extern crate getopts;
+extern crate time;
 
 // keep macros up here to be able to use them in submodules
 #[macro_use]

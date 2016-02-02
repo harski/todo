@@ -1,11 +1,10 @@
 // Copyright 2016 Tuomo Hartikainen <tth@harski.org>.
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
-extern crate time;
-
 use std::rc::Rc;
 
 use getopts::Options;
+use time;
 
 use todo_item::TodoItem;
 use todo_items;
