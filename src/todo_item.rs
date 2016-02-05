@@ -91,6 +91,8 @@ impl TodoItem {
         };
 
         // get attributes
+        // TODO: don't add know attributes to the vector
+        //       (fix the "date" hack below)
         let mut attrs = Vec::new();
         while let Some(line) = line_it.next() {
             // check if line is body separator
@@ -99,7 +101,11 @@ impl TodoItem {
             }
 
             match Attr::new_from_line(line) {
-                Ok(attr)    => { attrs.push(attr); },
+                Ok(attr)    => {
+                    if !attr.key.eq("date") {
+                        attrs.push(attr);
+                    }
+                },
                 Err(err)    => { print_err!("{}", err); },
             };
         }
