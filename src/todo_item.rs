@@ -43,20 +43,20 @@ impl TodoItem {
     }
 
 
-    pub fn new(attrs: Vec<Attr>, body: &str, date: Option<Tm>,
-               filename: &str, heading: &str, id: i32) -> TodoItem {
+    pub fn new(id: i32, filename: String) -> TodoItem {
         TodoItem {
-            attrs:      attrs,
-            body:       body.to_string(),
-            date:       date,
-            filename:   filename.to_string(),
-            heading:    heading.to_string(),
+            attrs:      Vec::new(),
+            body:       "".to_string(),
+            date:       None,
+            filename:   filename,
+            heading:    "".to_string(),
             id:         id,
         }
     }
 
 
     pub fn new_from_file(file: &Path, id: i32) -> Result<TodoItem, Error> {
+        // TODO: use combinators?
         let filename = file.to_str().unwrap();
         let mut fd = try!(File::open(file));
         let mut contents = String::new();
@@ -64,11 +64,14 @@ impl TodoItem {
 
         let mut line_it = contents.lines();
 
+        // init temporary TodoItem
+        let mut item = TodoItem::new(id, filename.to_string());
+
         // get heading
-        let heading = match line_it.next() {
+        item.heading = match line_it.next() {
             Some(line) => {
                 if line.trim().len() > 0 {
-                    line
+                    line.trim().to_string()
                 } else {
                     return Err(Error::new(ErrorKind::Other, "Heading empty"))
                 }
@@ -79,7 +82,6 @@ impl TodoItem {
         // get attributes
         // TODO: don't add know attributes to the vector
         //       (fix the "date" hack below)
-        let mut attrs = Vec::new();
         while let Some(line) = line_it.next() {
             // check if line is body separator
             if line.len() == 0 {
@@ -88,34 +90,31 @@ impl TodoItem {
 
             match Attr::new_from_line(line) {
                 Ok(attr)    => {
-                    if !attr.key.eq("date") {
-                        attrs.push(attr);
-                    }
+                    item.attrs.push(attr);
                 },
                 Err(err)    => { print_err!("{}", err); },
             };
         }
 
         // get body
-        let mut body = String::new();
         while let Some(line) = line_it.next() {
-            body = body + line + "\n";
+            item.body = item.body + line + "\n";
         }
 
-        // TODO: get_date_from_attrs
-        let date = match get_date_from_attrs(&mut attrs) {
+        // TODO: parse this in general attr parser
+        item.date = match get_date_from_attrs(&mut item.attrs) {
             Ok(d)   => Some(d),
             Err(e)  => {
                 if e.kind().eq(&ErrorKind::NotFound) {
                     None
                 } else {
-                    print_err!("Can't parse date for {}: {}", heading, e);
+                    print_err!("Can't parse date for {}: {}", item.heading, e);
                     return Err(Error::new(ErrorKind::Other, "Could not initialize date"));
                 }
             },
         };
 
-        Ok(TodoItem::new(attrs, body.trim(), date, &filename, &heading, id))
+        Ok(item)
     }
 }
 
