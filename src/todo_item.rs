@@ -26,7 +26,7 @@ pub struct TodoItem {
 
 
 impl TodoItem {
-    pub fn get_date(&self) -> Option<String> {
+    pub fn get_date_str(&self) -> Option<String> {
         // change Tm to str
         // TODO: Use combinators instead
         let ds = match self.date {

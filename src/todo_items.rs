@@ -12,7 +12,7 @@ pub fn filter_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
                             -> Vec<Rc<TodoItem>> {
     let mut today: Vec<Rc<TodoItem>> = Vec::new();
     for item in items {
-        match item.get_date() {
+        match item.get_date_str() {
             Some(d) => {
                 if d.eq(&date_str) {
                     today.push(item.clone());
