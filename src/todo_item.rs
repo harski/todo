@@ -25,20 +25,6 @@ pub struct TodoItem {
 }
 
 
-fn get_date_from_attrs(attrs: &mut Vec<Attr>) -> Result<Tm, Error> {
-    // TODO: Use combinators instead
-    for attr in attrs {
-        if attr.key.eq("date") {
-            return match time::strptime(&attr.value, "%Y-%m-%d") {
-                Ok(d)   => Ok(d),
-                Err(e)  => Err(Error::new(ErrorKind::Other, e)),
-            };
-        }
-    }
-    Err(Error::new(ErrorKind::NotFound, ""))
-}
-
-
 impl TodoItem {
     pub fn get_date(&self) -> Option<String> {
         // change Tm to str
@@ -131,4 +117,18 @@ impl TodoItem {
 
         Ok(TodoItem::new(attrs, body.trim(), date, &filename, &heading, id))
     }
+}
+
+
+fn get_date_from_attrs(attrs: &mut Vec<Attr>) -> Result<Tm, Error> {
+    // TODO: Use combinators instead
+    for attr in attrs {
+        if attr.key.eq("date") {
+            return match time::strptime(&attr.value, "%Y-%m-%d") {
+                Ok(d)   => Ok(d),
+                Err(e)  => Err(Error::new(ErrorKind::Other, e)),
+            };
+        }
+    }
+    Err(Error::new(ErrorKind::NotFound, ""))
 }
