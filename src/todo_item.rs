@@ -28,18 +28,7 @@ pub struct TodoItem {
 impl TodoItem {
     pub fn get_date_str(&self) -> Option<String> {
         // change Tm to str
-        // TODO: Use combinators instead
-        let ds = match self.date {
-            Some(d) => {
-                 match time::strftime("%Y-%m-%d", &d) {
-                     Ok(ds) => Some(ds),
-                     _      => None,
-                 }
-            },
-            None    => None,
-        };
-
-        ds
+        self.date.map(|date| time::strftime("%Y-%m-%d", &date).ok()).unwrap_or(None)
     }
 
 
@@ -120,7 +109,6 @@ impl TodoItem {
 
 
 fn get_date_from_attrs(attrs: &mut Vec<Attr>) -> Result<Tm, Error> {
-    // TODO: Use combinators instead
     for attr in attrs {
         if attr.key.eq("date") {
             return match time::strptime(&attr.value, "%Y-%m-%d") {
