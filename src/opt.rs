@@ -4,8 +4,10 @@
 use std::env;
 use std::path::PathBuf;
 
+use action::Action;
 
 pub struct Opt {
+    pub actions:    Vec<Action>,
     pub debug:      bool,
     pub todo_dir:   PathBuf,
 }
@@ -27,8 +29,9 @@ impl Opt {
         todo_dir.push(".todo/");
 
         Opt {
-            debug: false,
-            todo_dir: todo_dir,
+            actions:    Vec::new(),
+            debug:      false,
+            todo_dir:   todo_dir,
         }
     }
 }

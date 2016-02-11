@@ -9,6 +9,7 @@ use time;
 use todo_item::TodoItem;
 use todo_items;
 
+#[derive(Clone)]
 pub enum Action {
     Dump,
     Help,

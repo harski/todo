@@ -27,11 +27,18 @@ fn main() {
     let opts_in: Options = optutil::get_options();
     let opts: Opt = optutil::parse_options(&args, &opts_in);
 
+    let action = match check_actions(&opts.actions) {
+        Some(ac)    => { ac },
+        None        => {
+            return;
+        },
+    };
+
     if opts.debug {
         opts.dump();
     }
 
-    let action = optutil::get_action(&opts_in, &args);
+    //let action = optutil::get_action(&opts_in, &args);
 
     // "trivial" actions, always return
     match action {
@@ -51,4 +58,17 @@ fn main() {
         },
         Err(err)    => print_err!("Could not parse todo items: {}", err),
     };
+}
+
+
+fn check_actions(actions: &Vec<Action>) -> Option<Action> {
+    if actions.len() == 0 {
+        print_err!("Action not set");
+        return None;
+    } else if actions.len() > 1 {
+        print_err!("Too many actions set");
+        return None;
+    } else {
+        return actions.last().cloned();
+    }
 }
