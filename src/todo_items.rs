@@ -8,23 +8,6 @@ use std::path::{Path, PathBuf};
 use todo_item::TodoItem;
 
 
-pub fn filter_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
-                            -> Vec<Rc<TodoItem>> {
-    let mut today: Vec<Rc<TodoItem>> = Vec::new();
-    for item in items {
-        match item.get_date_str() {
-            Some(d) => {
-                if d.eq(&date_str) {
-                    today.push(item.clone());
-                }
-            },
-            None    => {},
-        };
-    }
-    today
-}
-
-
 pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
     let mut files = Vec::new();
     // get file list
@@ -40,6 +23,23 @@ pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
         }
     }
     Ok(files)
+}
+
+
+pub fn get_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
+                            -> Vec<Rc<TodoItem>> {
+    let mut today: Vec<Rc<TodoItem>> = Vec::new();
+    for item in items {
+        match item.get_date_str() {
+            Some(d) => {
+                if d.eq(&date_str) {
+                    today.push(item.clone());
+                }
+            },
+            None    => {},
+        };
+    }
+    today
 }
 
 

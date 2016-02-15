@@ -54,7 +54,7 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
         },
     };
 
-    let todays = todo_items::filter_items_on_date(&items, &today_str);
+    let todays = todo_items::get_items_on_date(&items, &today_str);
 
     if todays.len() > 0 {
         let mut first = true;
