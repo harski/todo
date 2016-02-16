@@ -14,6 +14,7 @@ pub enum Action {
     Dump,
     Help,
     Today,
+    TodayOnly,
     Version,
 }
 
@@ -54,7 +55,41 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
         },
     };
 
-    let todays = todo_items::get_items_on_date(&items, &today_str);
+    // TODO: get all undone items, and print past and today's items
+    let undone = todo_items::get_undone_items(&items);
+    let before = todo_items::get_items_before(&undone, &today_str);
+    let todays = todo_items::get_items_on_date(&undone, &today_str);
+
+    if todays.len() > 0 {
+        for item in todays {
+            println!("{}", item.heading);
+        }
+    } else {
+        println!("Nothing to do today :)");
+    }
+
+    if before.len() > 0 {
+        println!("\nPast unfinished tasks:\n");
+
+        // TODO: loop for different days
+        for item in before {
+            println!("{}", item.heading);
+        }
+    }
+}
+
+
+pub fn print_today_only(items: &Vec<Rc<TodoItem>>) {
+    let today_str = match get_date_today() {
+        Ok(date)    => date,
+        Err(err)    => {
+            print_err!("Could not get today's date: {}", err);
+            return;
+        },
+    };
+
+    let todays_all = todo_items::get_items_on_date(&items, &today_str);
+    let todays = todo_items::get_undone_items(&todays_all);
 
     if todays.len() > 0 {
         let mut first = true;

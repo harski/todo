@@ -1,6 +1,7 @@
 // Copyright 2016 Tuomo Hartikainen <tth@harski.org>.
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
+use std::cmp::Ordering;
 use std::fs::File;
 use std::io::{Error, ErrorKind, Read};
 use std::path::Path;
@@ -10,6 +11,7 @@ use time;
 use time::Tm;
 
 use attr::Attr;
+use status::{Status, parse_status_val};
 
 macro_rules! try_opt(
     ($e:expr) => (match $e { Some(e) => e, None => return None })
@@ -24,6 +26,7 @@ pub struct TodoItem {
     pub filename:   String,
     pub heading:    String,
     pub id:         i32,
+    pub status:     Option<Status>,
 }
 
 
@@ -42,6 +45,7 @@ impl TodoItem {
             filename:   filename,
             heading:    "".to_string(),
             id:         id,
+            status:     None,
         }
     }
 
@@ -62,6 +66,51 @@ impl TodoItem {
         parse_attrs(&attrs, &mut item);
 
         Ok(item)
+    }
+}
+
+
+impl Eq for TodoItem {}
+
+
+impl Ord for TodoItem {
+    // TODO: compare Tm fields instead of strs
+    fn cmp(&self, other: &Self) -> Ordering {
+        let sd = self.get_date_str();
+        let od = other.get_date_str();
+
+        if sd.is_none() && od.is_none() {
+            return Ordering::Equal;
+        } else if sd.is_some() && od.is_none() {
+            return Ordering::Less;
+        } else if sd.is_none() && od.is_some() {
+            return Ordering::Greater;
+        } else {
+            return sd.unwrap().cmp(&od.unwrap());
+        }
+    }
+}
+
+
+impl PartialEq for TodoItem {
+    fn eq(&self, other: &Self) -> bool {
+        let sd = &self.date;
+        let od = &other.date;
+
+        if sd.is_none() && od.is_none() {
+            return true;
+        } else if sd.is_some() && od.is_some() &&
+                  self.cmp(other) == Ordering::Equal {
+                return true;
+        }
+        false
+    }
+}
+
+
+impl PartialOrd for TodoItem {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
 
@@ -119,13 +168,16 @@ fn get_heading(line_it: &mut Lines) -> Result<String, Error> {
 fn parse_attrs(attrs: &Vec<Attr>, item: &mut TodoItem) {
     for attr in attrs {
         match &attr.key[..] {
-            "date"  => {
+            "date"      => {
                 match parse_date(&attr.value) {
                     Ok(date)    => item.date = Some(date),
                     Err(err)    => print_err!("{}: {}", item.filename, err),
                 };
             }
-            _       => {
+            "status"    => {
+                item.status = parse_status_val(&attr.value);
+            },
+            _           => {
                 print_err!("{}: invalid attr: key='{}', value='{}'",
                            item.filename, attr.key, attr.value )
             },

@@ -11,6 +11,7 @@ mod action;
 mod attr;
 mod opt;
 mod optutil;
+mod status;
 mod todo_item;
 mod todo_items;
 
@@ -20,6 +21,7 @@ use std::env;
 use action::Action;
 use opt::Opt;
 use todo_items::get_todo_items;
+
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -53,6 +55,7 @@ fn main() {
             match action {
                 Action::Dump    => { action::dump(&items); },
                 Action::Today   => { action::print_today(&items); },
+                Action::TodayOnly   => { action::print_today_only(&items); },
                 _               => {},
             }
         },

@@ -5,6 +5,8 @@ use std::fs;
 use std::io;
 use std::rc::Rc;
 use std::path::{Path, PathBuf};
+
+use status::Status;
 use todo_item::TodoItem;
 
 
@@ -43,6 +45,20 @@ pub fn get_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
 }
 
 
+pub fn get_items_before(items: &Vec<Rc<TodoItem>>, date_str: &str)
+                      -> Vec<Rc<TodoItem>> {
+    let mut list: Vec<Rc<TodoItem>> = Vec::new();
+    for item in items {
+        if let Some(i_date) = item.get_date_str() {
+            if &i_date[..] < date_str {
+                list.push(item.clone());
+            }
+        }
+    }
+    list
+}
+
+
 pub fn get_todo_items(path: &Path) -> io::Result<Vec<Rc<TodoItem>>> {
     let mut items: Vec<Rc<TodoItem>> = Vec::new();
     let files = try!(get_files_in_dir(path));
@@ -54,4 +70,19 @@ pub fn get_todo_items(path: &Path) -> io::Result<Vec<Rc<TodoItem>>> {
     };
 
     Ok(items)
+}
+
+
+// TODO: None does not end up to undone items?
+pub fn get_undone_items(items: &Vec<Rc<TodoItem>>) -> Vec<Rc<TodoItem>> {
+    let mut undone: Vec<Rc<TodoItem>> = Vec::new();
+    for item in items {
+        match item.status {
+            Some(ref s) => {
+                if *s == Status::Todo { undone.push(item.clone()); }
+            },
+            None    => undone.push(item.clone()),
+        };
+    };
+    undone
 }

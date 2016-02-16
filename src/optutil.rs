@@ -6,12 +6,14 @@ use getopts::Options;
 use action::Action;
 use opt::Opt;
 
+// TODO: rephrase
 pub fn get_options() -> Options {
     let mut opts = Options::new();
     opts.optflag("D", "debug", "set debug mode");
     opts.optflag("d", "dump", "show raw todo items");
     opts.optflag("h", "help", "print this help");
-    opts.optflag("t", "today", "print today's items");
+    opts.optflag("t", "today", "print today's and past undone items");
+    opts.optflag("T", "today-only", "print only today's items");
     opts.optflag("v", "version", "show version");
     opts
 }
@@ -29,6 +31,7 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options) -> Opt {
     if matches.opt_present("d") { opts.actions.push(Action::Dump); }
     if matches.opt_present("h") { opts.actions.push(Action::Help); }
     if matches.opt_present("t") { opts.actions.push(Action::Today); }
+    if matches.opt_present("T") { opts.actions.push(Action::TodayOnly); }
     if matches.opt_present("v") { opts.actions.push(Action::Version); }
     opts
 }
