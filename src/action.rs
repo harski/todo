@@ -58,6 +58,7 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
     // TODO: get all undone items, and print past and today's items
     let undone = todo_items::get_undone_items(&items);
     let before = todo_items::get_items_before(&undone, &today_str);
+    let dateless = todo_items::get_dateless_items(&undone);
     let todays = todo_items::get_items_on_date(&undone, &today_str);
 
     if todays.len() > 0 {
@@ -69,10 +70,26 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
     }
 
     if before.len() > 0 {
-        println!("\nPast unfinished tasks:\n");
+        println!("\nPast unfinished tasks:");
+
+        let mut date_str: String = before.first().unwrap().get_date_str().unwrap();
+        println!("\n{}:", date_str);
 
         // TODO: loop for different days
         for item in before {
+            // update date if necessary
+            let date_tmp = item.get_date_str().unwrap();
+            if !date_str.eq(&date_tmp) {
+                date_str = date_tmp;
+                println!("\n{}:", date_str);
+            }
+            println!("\t{}", item.heading);
+        }
+    }
+
+    if dateless.len() > 0 {
+        println!("\nDateless unfinished tasks:\n");
+        for item in dateless {
             println!("{}", item.heading);
         }
     }

@@ -10,6 +10,18 @@ use status::Status;
 use todo_item::TodoItem;
 
 
+pub fn get_dateless_items(items: &Vec<Rc<TodoItem>>)
+                          -> Vec<Rc<TodoItem>> {
+    let mut dateless: Vec<Rc<TodoItem>> = Vec::new();
+    for item in items {
+        if item.date.is_none() {
+            dateless.push(item.clone());
+        }
+    }
+    dateless
+}
+
+
 pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
     let mut files = Vec::new();
     // get file list
