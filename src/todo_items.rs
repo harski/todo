@@ -69,6 +69,8 @@ pub fn get_todo_items(path: &Path) -> io::Result<Vec<Rc<TodoItem>>> {
         };
     };
 
+    // Sort items here, so filtered items will be "automatically" in order too
+    items.sort();
     Ok(items)
 }
 
