@@ -55,27 +55,28 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
         },
     };
 
-    // TODO: get all undone items, and print past and today's items
+    // get all undone items, and print past and today's items
     let undone = todo_items::get_undone_items(&items);
     let before = todo_items::get_items_before(&undone, &today_str);
     let dateless = todo_items::get_dateless_items(&undone);
     let todays = todo_items::get_items_on_date(&undone, &today_str);
 
+    println!("Items for today, {}", today_str);
     if todays.len() > 0 {
         for item in todays {
-            println!("{}", item.heading);
+            println!("\t{}", item.heading);
         }
     } else {
-        println!("Nothing to do today :)");
+        println!("\tNothing to do today :)");
     }
 
     if before.len() > 0 {
         println!("\nPast unfinished tasks:");
 
         let mut date_str: String = before.first().unwrap().get_date_str().unwrap();
-        println!("\n{}:", date_str);
+        println!("{}:", date_str);
 
-        // TODO: loop for different days
+        // loop for different days
         for item in before {
             // update date if necessary
             let date_tmp = item.get_date_str().unwrap();
@@ -88,9 +89,9 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
     }
 
     if dateless.len() > 0 {
-        println!("\nDateless unfinished tasks:\n");
+        println!("\nDateless unfinished tasks:");
         for item in dateless {
-            println!("{}", item.heading);
+            println!("\t{}", item.heading);
         }
     }
 }
@@ -108,21 +109,14 @@ pub fn print_today_only(items: &Vec<Rc<TodoItem>>) {
     let todays_all = todo_items::get_items_on_date(&items, &today_str);
     let todays = todo_items::get_undone_items(&todays_all);
 
+    println!("Items for today, {}", today_str);
     if todays.len() > 0 {
         let mut first = true;
         for item in todays {
-            match first {
-                true    => first = false,
-                false   => println!(""),
-            };
-
-            println!("{}", item.heading);
-            for attr in &item.attrs {
-                println!("{}: {}", attr.key, attr.value);
-            }
+            println!("\t{}", item.heading);
         }
     } else {
-        println!("Nothing to do today :)");
+        println!("\tNothing to do today :)");
     }
 }
 
