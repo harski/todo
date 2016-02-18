@@ -111,7 +111,6 @@ pub fn print_today_only(items: &Vec<Rc<TodoItem>>) {
 
     println!("Items for today, {}", today_str);
     if todays.len() > 0 {
-        let mut first = true;
         for item in todays {
             println!("\t{}", item.heading);
         }
