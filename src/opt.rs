@@ -9,6 +9,7 @@ use action::Action;
 pub struct Opt {
     pub actions:    Vec<Action>,
     pub debug:      bool,
+    pub item_id:    i32,
     pub todo_dir:   PathBuf,
 }
 
@@ -31,6 +32,7 @@ impl Opt {
         Opt {
             actions:    Vec::new(),
             debug:      false,
+            item_id:    0,
             todo_dir:   todo_dir,
         }
     }

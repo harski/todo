@@ -40,6 +40,16 @@ pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
 }
 
 
+pub fn get_item_by_id(items: &Vec<Rc<TodoItem>>, i: i32) -> Option<Rc<TodoItem>> {
+    for item in items {
+        if item.id == i {
+            return Some(item.clone());
+        }
+    };
+    None
+}
+
+
 pub fn get_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
                             -> Vec<Rc<TodoItem>> {
     let mut today: Vec<Rc<TodoItem>> = Vec::new();

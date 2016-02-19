@@ -27,7 +27,13 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
     let opts_in: Options = optutil::get_options();
-    let opts: Opt = optutil::parse_options(&args, &opts_in);
+    let opts: Opt = match optutil::parse_options(&args, &opts_in) {
+        Ok(opt) => opt,
+        Err(e)  => {
+            print_err!("Error parsing options: {}", e);
+            std::process::exit(1);
+        },
+    };
 
     let action = match check_actions(&opts.actions) {
         Some(ac)    => { ac },
@@ -54,6 +60,7 @@ fn main() {
         Ok(items)   => {
             match action {
                 Action::Dump    => { action::dump(&items); },
+                Action::Show    => { action::show_item(&items, opts.item_id); },
                 Action::Today   => { action::print_today(&items); },
                 Action::TodayOnly   => { action::print_today_only(&items); },
                 _               => {},
@@ -64,6 +71,7 @@ fn main() {
 }
 
 
+/// Check that only one action has been called
 fn check_actions(actions: &Vec<Action>) -> Option<Action> {
     if actions.len() == 0 {
         print_err!("Action not set");

@@ -13,6 +13,7 @@ use todo_items;
 pub enum Action {
     Dump,
     Help,
+    Show,
     Today,
     TodayOnly,
     Version,
@@ -128,4 +129,17 @@ pub fn print_today_only(items: &Vec<Rc<TodoItem>>) {
 pub fn print_version() {
     println!("todo version {}", VERSION);
     println!("{}", LICENSE_STR);
+}
+
+
+pub fn show_item(items: &Vec<Rc<TodoItem>>, i: i32) {
+    match todo_items::get_item_by_id(&items, i) {
+        Some(i) => {
+            println!("id: {}", i.id);
+            println!("filename: {}", i.filename);
+            println!("heading: {}", i.heading);
+            println!("\n{}", i.body);
+        },
+        None    => print_err!("Error: Item {} not found", i),
+    };
 }
