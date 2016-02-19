@@ -46,6 +46,11 @@ pub fn print_help(program: &str, opts: &Options) {
 }
 
 
+fn print_item(item: &TodoItem) {
+    println!("\t[{:3}]: {}", item.id, item.heading);
+}
+
+
 pub fn print_today(items: &Vec<Rc<TodoItem>>) {
     let today_str = match get_date_today() {
         Ok(date)    => date,
@@ -64,7 +69,7 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
     println!("Items for today, {}", today_str);
     if todays.len() > 0 {
         for item in todays {
-            println!("\t{}", item.heading);
+            print_item(&item);
         }
     } else {
         println!("\tNothing to do today :)");
@@ -84,14 +89,14 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
                 date_str = date_tmp;
                 println!("\n{}:", date_str);
             }
-            println!("\t{}", item.heading);
+            print_item(&item);
         }
     }
 
     if dateless.len() > 0 {
         println!("\nDateless unfinished tasks:");
         for item in dateless {
-            println!("\t{}", item.heading);
+            print_item(&item);
         }
     }
 }
@@ -112,7 +117,7 @@ pub fn print_today_only(items: &Vec<Rc<TodoItem>>) {
     println!("Items for today, {}", today_str);
     if todays.len() > 0 {
         for item in todays {
-            println!("\t{}", item.heading);
+            print_item(&item);
         }
     } else {
         println!("\tNothing to do today :)");
