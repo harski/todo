@@ -11,6 +11,9 @@ all: debug
 install: release
 	cp ${RELEASE_BIN} ${PREFIX}/bin/${TARGET}
 
+uninstall:
+	rm ${PREFIX}/bin/${TARGET}
+
 ${RELEASE_BIN}:
 	cargo build --release
 
@@ -27,4 +30,4 @@ clean:
 run: ${DEBUG_BIN}
 	cargo run
 
-.PHONY: clean debug install release run
+.PHONY: clean debug install release run uninstall
