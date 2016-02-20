@@ -1,0 +1,47 @@
+TODO
+====
+
+todo is a tool meant for handling tasks and notes. It reads the
+directory $HOME/.todo and interpretes the files inside as TodoItems. The
+items need to have a specific format as described below.
+
+`todo -t` will print items for the current day and the ones that were
+due in the past but arent marked as done. `todo -a` will print out
+agenda, i.e. items for the next (by default) eight days. See `todo -h`
+for other actions and options.
+
+
+COMPILING, INSTALLING AND UNINSTALLING
+--------------------------------------
+
+Build todo with Cargo:
+
+    $ cargo build --release
+
+Install the program with
+
+    $ make install
+
+and uninstall with
+
+    $ make uninstall
+
+
+BUGS
+----
+
+If you have found a bug in the program, please report it to the author
+directly. See AUTHOR section below for contact information.
+
+
+AUTHOR
+------
+
+Written by Tuomo Hartikainen <tth@harski.org>.
+
+
+LICENSE
+-------
+
+Licensed under the 2-clause BSD license. See the supplied LICENSE file for
+details.
