@@ -40,8 +40,8 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options)
     if matches.opt_present("s") {
         opts.actions.push(Action::Show);
         match matches.opt_str("s") {
-            Some(id)  => match id.parse::<i64>() {
-                Ok(i)    => { opts.agenda_days = i; },
+            Some(id)  => match id.parse::<i32>() {
+                Ok(i)    => { opts.item_id = i; },
                 Err(err) => {
                     let err_msg =
                         format!("Invalid argument to 'item show' action: {}", err);
