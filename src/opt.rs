@@ -8,6 +8,7 @@ use action::Action;
 
 pub struct Opt {
     pub actions:    Vec<Action>,
+    pub agenda_days:i64,
     pub debug:      bool,
     pub item_id:    i32,
     pub todo_dir:   PathBuf,
@@ -31,6 +32,7 @@ impl Opt {
 
         Opt {
             actions:    Vec::new(),
+            agenda_days:8,
             debug:      false,
             item_id:    0,
             todo_dir:   todo_dir,

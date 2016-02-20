@@ -2,15 +2,20 @@
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
 use std::rc::Rc;
+use std::ops::Add;
 
 use getopts::Options;
 use time;
+use time::Tm;
 
+use opt::Opt;
 use todo_item::TodoItem;
 use todo_items;
+use util;
 
 #[derive(Clone)]
 pub enum Action {
+    Agenda,
     Dump,
     Help,
     Show,
@@ -25,6 +30,41 @@ const LICENSE_STR: &'static str =
      Licensed under the 2-clause BSD license, see LICENSE for details.";
 
 
+pub fn agenda(opt: &Opt, items: &Vec<Rc<TodoItem>>) {
+    // TODO: Error handling, get rid of unwrap()
+    let today: time::Tm = time::now() ;
+    let dur = time::Duration::days(opt.agenda_days);
+    let up_limit = today.add(dur);
+    let limit_str = util::date_to_str(&up_limit).unwrap();
+
+    let undone = todo_items::get_undone_items(&items);
+    let before = todo_items::get_items_before(&undone, &limit_str);
+    let agenda = todo_items::get_items_after(&before,
+                                             &util::date_to_str(&today).unwrap());
+
+    // print agenda
+    if agenda.len() > 0 {
+        println!("Agenda for the next {} days:", opt.agenda_days);
+
+        let mut date_str: String = agenda.first().unwrap().get_date_str().unwrap();
+        println!("{}:", date_str);
+
+        // loop for different days
+        for item in agenda {
+            // update date if necessary
+            let date_tmp = item.get_date_str().unwrap();
+            if !date_str.eq(&date_tmp) {
+                date_str = date_tmp;
+                println!("\n{}:", date_str);
+            }
+            print_item(&item);
+        }
+    } else {
+        println!("Agenda is empty for the next {} days.", opt.agenda_days);
+    }
+}
+
+
 pub fn dump(items: &Vec<Rc<TodoItem>>) {
     for item in items {
         println!("{:?}", item);
@@ -32,12 +72,8 @@ pub fn dump(items: &Vec<Rc<TodoItem>>) {
 }
 
 
-fn get_date_today() -> Result<String, time::ParseError> {
-    let now = time::now();
-    match time::strftime("%Y-%m-%d", &now) {
-        Ok(d_str)   => Ok(d_str),
-        Err(err)    => Err(err),
-    }
+fn get_date_today_str() -> Result<String, time::ParseError> {
+    util::date_to_str(&time::now())
 }
 
 
@@ -53,7 +89,7 @@ fn print_item(item: &TodoItem) {
 
 
 pub fn print_today(items: &Vec<Rc<TodoItem>>) {
-    let today_str = match get_date_today() {
+    let today_str = match get_date_today_str() {
         Ok(date)    => date,
         Err(err)    => {
             print_err!("Could not get today's date: {}", err);
@@ -104,7 +140,7 @@ pub fn print_today(items: &Vec<Rc<TodoItem>>) {
 
 
 pub fn print_today_only(items: &Vec<Rc<TodoItem>>) {
-    let today_str = match get_date_today() {
+    let today_str = match get_date_today_str() {
         Ok(date)    => date,
         Err(err)    => {
             print_err!("Could not get today's date: {}", err);

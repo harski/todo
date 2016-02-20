@@ -59,6 +59,7 @@ fn main() {
     match get_todo_items(opts.todo_dir.as_path()) {
         Ok(items)   => {
             match action {
+                Action::Agenda  => { action::agenda(&opts, &items); },
                 Action::Dump    => { action::dump(&items); },
                 Action::Show    => { action::show_item(&items, opts.item_id); },
                 Action::Today   => { action::print_today(&items); },

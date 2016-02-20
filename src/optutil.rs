@@ -11,6 +11,7 @@ use opt::Opt;
 // TODO: rephrase
 pub fn get_options() -> Options {
     let mut opts = Options::new();
+    opts.optflag("a", "agenda", "show agenda");
     opts.optflag("D", "debug", "set debug mode");
     opts.optflag("d", "dump", "show raw todo items");
     opts.optflag("h", "help", "print this help");
@@ -22,6 +23,7 @@ pub fn get_options() -> Options {
 }
 
 
+// TODO Add setting agenda_days
 pub fn parse_options(args: &Vec<String>, opts_in: &Options)
                      -> Result<Opt, Error> {
     let mut opts: Opt = Opt::new();
@@ -31,14 +33,15 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options)
         Err(f)  => { panic!(f.to_string()) }
     };
 
+    if matches.opt_present("a") { opts.actions.push(Action::Agenda); }
     if matches.opt_present("D") { opts.debug = true; }
     if matches.opt_present("d") { opts.actions.push(Action::Dump); }
     if matches.opt_present("h") { opts.actions.push(Action::Help); }
     if matches.opt_present("s") {
         opts.actions.push(Action::Show);
         match matches.opt_str("s") {
-            Some(id)  => match id.parse::<i32>() {
-                Ok(i)    => { opts.item_id = i; },
+            Some(id)  => match id.parse::<i64>() {
+                Ok(i)    => { opts.agenda_days = i; },
                 Err(err) => {
                     let err_msg =
                         format!("Invalid argument to 'item show' action: {}", err);

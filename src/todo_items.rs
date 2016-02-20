@@ -67,8 +67,21 @@ pub fn get_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
 }
 
 
-pub fn get_items_before(items: &Vec<Rc<TodoItem>>, date_str: &str)
+pub fn get_items_after(items: &Vec<Rc<TodoItem>>, date_str: &str)
                       -> Vec<Rc<TodoItem>> {
+    let mut list: Vec<Rc<TodoItem>> = Vec::new();
+    for item in items {
+        if let Some(i_date) = item.get_date_str() {
+            if &i_date[..] > date_str {
+                list.push(item.clone());
+            }
+        }
+    }
+    list
+}
+
+pub fn get_items_before(items: &Vec<Rc<TodoItem>>, date_str: &str)
+                       -> Vec<Rc<TodoItem>> {
     let mut list: Vec<Rc<TodoItem>> = Vec::new();
     for item in items {
         if let Some(i_date) = item.get_date_str() {

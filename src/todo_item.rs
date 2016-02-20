@@ -12,6 +12,7 @@ use time::Tm;
 
 use attr::Attr;
 use status::{Status, parse_status_val};
+use util;
 
 macro_rules! try_opt(
     ($e:expr) => (match $e { Some(e) => e, None => return None })
@@ -33,7 +34,7 @@ pub struct TodoItem {
 impl TodoItem {
     pub fn get_date_str(&self) -> Option<String> {
         // change Tm to str
-        self.date.map(|date| time::strftime("%Y-%m-%d", &date).ok()).unwrap_or(None)
+        self.date.map(|date| util::date_to_str(&date).ok()).unwrap_or(None)
     }
 
 
