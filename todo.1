@@ -1,0 +1,40 @@
+.TH TODO 1 "0.1.0"
+
+.SH NAME
+\fBtodo\fP \- show todo list and agenda
+.SH SYNOPSIS
+\fBtodo\fP [\fIOPTIONS\fP] \fI[ACTIONS]\fP
+.SH DESCRIPTION
+\fBtodo\fP is a tool for showing and handling todo items. Todo items can be
+shown for the current day or for a certain period in to the future.
+.SH ACTIONS
+.TP
+\fB-a\fP, \fB--agenda\fP
+Show agenda for the next # days (default is 8 days).
+.TP
+\fB-d\fP, \fB--dump\fP
+Show a raw dump of all items.
+.TP
+\fB-h\fP, \fB--help\fP
+Show help.
+.TP
+\fB-s\fP \fIID\fP, \fB--show\fP \fIID\fP
+Print item ID.
+.TP
+\fB-t\fP, \fB--today\fP
+Show todo items for today and any past undone items.
+.TP
+\fB-T\fP, \fB--today-only\fP
+Show todo items only for today.
+.TP
+\fB-v\fP, \fB--version\fP
+Show todo version.
+.SH OPTIONS
+.TP
+\fB-D\fP, \fB--debug\fP
+Show on debug information.
+.SH COPYRIGHT
+Copyright (c) 2016 Tuomo Hartikainen. Procwait is free software; see the
+sources for copying conditions.
+.SH AUTHOR
+Tuomo Hartikainen <tth@harski.org>

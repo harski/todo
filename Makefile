@@ -10,9 +10,11 @@ all: debug
 
 install: release
 	cp ${RELEASE_BIN} ${PREFIX}/bin/${TARGET}
+	cp ${TARGET}.1 ${PREFIX}/share/man/man1
 
 uninstall:
 	rm ${PREFIX}/bin/${TARGET}
+	rm ${PREFIX}/share/man/man1/${TARGET}.1
 
 ${RELEASE_BIN}:
 	cargo build --release
