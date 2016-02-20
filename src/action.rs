@@ -13,7 +13,7 @@ use todo_item::TodoItem;
 use todo_items;
 use util;
 
-#[derive(Clone)]
+#[derive(Clone,Eq,Ord,PartialEq,PartialOrd)]
 pub enum Action {
     Agenda,
     Dump,

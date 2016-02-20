@@ -12,6 +12,7 @@ use opt::Opt;
 pub fn get_options() -> Options {
     let mut opts = Options::new();
     opts.optflag("a", "agenda", "show agenda");
+    opts.optopt("A", "agenda-days", "set agenda days", "DAYS#");
     opts.optflag("D", "debug", "set debug mode");
     opts.optflag("d", "dump", "show raw todo items");
     opts.optflag("h", "help", "print this help");
@@ -33,6 +34,20 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options)
         Err(f)  => { panic!(f.to_string()) }
     };
 
+    if matches.opt_present("A") {
+        opts.actions.push(Action::Agenda);
+        match matches.opt_str("A") {
+            Some(id)  => match id.parse::<i64>() {
+                Ok(i)    => { opts.agenda_days = i; },
+                Err(err) => {
+                    let err_msg =
+                        format!("Invalid argument to '--agenda-days': {}", err);
+                    return Err(Error::new(ErrorKind::Other, err_msg));
+                },
+            },
+            None  => {},
+        };
+    };
     if matches.opt_present("a") { opts.actions.push(Action::Agenda); }
     if matches.opt_present("D") { opts.debug = true; }
     if matches.opt_present("d") { opts.actions.push(Action::Dump); }
@@ -54,5 +69,7 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options)
     if matches.opt_present("t") { opts.actions.push(Action::Today); }
     if matches.opt_present("T") { opts.actions.push(Action::TodayOnly); }
     if matches.opt_present("v") { opts.actions.push(Action::Version); }
+    opts.actions.sort();
+    opts.actions.dedup();
     Ok(opts)
 }
