@@ -27,6 +27,38 @@ and uninstall with
     $ make uninstall
 
 
+TODO FILE FORMAT
+----------------
+
+A regex-like description of the format is
+"heading\n(tag\n)*(\nbody\n)?".
+
+Every attribute in the file is split on their own line, apart from the
+body that can span on multiple lines. The heading is the only mandatory
+piece of data and should always be on the first line of the file. Other
+attributes can be omitted.
+
+Heading is followed by any number of tags. Tags are key-value pairs,
+separated by a colon (':'). Key and value are trimmed of whitespace from
+start and end when parsing the file, so "a:b" and "a: b " both describe
+the same pair.
+
+The body is separated from the header section (heading and tags) by a
+newline, and everything after it is considered as the body. The body is
+not parsed at all but is read "as is" instead. Thus it can span on
+multiple lines and be freely formatted.
+
+An example of a todo file would be:
+
++++
+Release version 0.2.0 of 'todo'
+date: 2016-02-20
+status: done
+
+Tag a new release and push it to public .git repo.
++++
+
+
 BUGS
 ----
 
