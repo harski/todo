@@ -169,13 +169,18 @@ pub fn print_version() {
 
 
 pub fn show_item(items: &Vec<Rc<TodoItem>>, i: i32) {
-    match todo_items::get_item_by_id(&items, i) {
-        Some(i) => {
-            println!("id: {}", i.id);
-            println!("filename: {}", i.filename);
-            println!("heading: {}", i.heading);
-            println!("\n{}", i.body);
-        },
-        None    => print_err!("Error: Item {} not found", i),
-    };
+    // 0 indicates id was not set
+    if i != 0 {
+        match todo_items::get_item_by_id(&items, i) {
+            Some(i) => {
+                println!("id: {}", i.id);
+                println!("filename: {}", i.filename);
+                println!("heading: {}", i.heading);
+                println!("\n{}", i.body);
+            },
+            None    => print_err!("Error: Item {} not found", i),
+        };
+    } else {
+        print_err!("Item ID not set");
+    }
 }
