@@ -21,6 +21,7 @@ pub fn get_options() -> Options {
     opts.optflag("t", "today", "print today's and past undone items");
     opts.optflag("T", "today-only", "print only today's items");
     opts.optflag("v", "version", "show version");
+    opts.optflag("X", "delete", "delete item");
     opts
 }
 
@@ -70,6 +71,7 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options)
     if matches.opt_present("t") { opts.actions.push(Action::Today); }
     if matches.opt_present("T") { opts.actions.push(Action::TodayOnly); }
     if matches.opt_present("v") { opts.actions.push(Action::Version); }
+    if matches.opt_present("X") { opts.actions.push(Action::Delete); }
     opts.actions.sort();
     opts.actions.dedup();
     Ok(opts)

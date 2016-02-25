@@ -1,6 +1,7 @@
 // Copyright 2016 Tuomo Hartikainen <tth@harski.org>.
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
+use std::fs;
 use std::rc::Rc;
 use std::ops::Add;
 
@@ -16,6 +17,7 @@ use util;
 #[derive(Clone,Eq,Ord,PartialEq,PartialOrd)]
 pub enum Action {
     Agenda,
+    Delete,
     Dump,
     Help,
     Show,
@@ -61,6 +63,26 @@ pub fn agenda(opt: &Opt, items: &Vec<Rc<TodoItem>>) {
         }
     } else {
         println!("Agenda is empty for the next {} days.", opt.agenda_days);
+    }
+}
+
+
+pub fn delete_item(items: &Vec<Rc<TodoItem>>, i: i32) {
+    if i != 0 {
+        match todo_items::get_item_by_id(&items, i) {
+            Some(i) => {
+                match fs::remove_file(&i.filename) {
+                    Ok(_)   => {},
+                    Err(e)  =>
+                        print_err!("Error: cannot delete item {}: {}",
+                                   i.id, e),
+                };
+            },
+            None    =>
+                print_err!("Error: cannot delete item {}: item not found", i),
+        };
+    } else {
+        print_err!("Item ID not set");
     }
 }
 

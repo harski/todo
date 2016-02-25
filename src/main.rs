@@ -60,6 +60,7 @@ fn main() {
         Ok(items)   => {
             match action {
                 Action::Agenda  => { action::agenda(&opts, &items); },
+                Action::Delete  => { action::delete_item(&items, opts.item_id); },
                 Action::Dump    => { action::dump(&items); },
                 Action::Show    => { action::show_item(&items, opts.item_id); },
                 Action::Today   => { action::print_today(&items); },
