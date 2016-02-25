@@ -6,6 +6,7 @@ use std::path::PathBuf;
 
 use action::Action;
 
+#[derive(Debug)]
 pub struct Opt {
     pub actions:    Vec<Action>,
     pub agenda_days:i64,
@@ -18,9 +19,7 @@ pub struct Opt {
 impl Opt {
     pub fn dump(&self) {
         println!("Opts are:");
-        println!("debug: {:?}", self.debug);
-        println!("todo_dir: {:?}", self.todo_dir);
-        println!("");
+        println!("{:?}", self);
     }
 
     pub fn new() -> Opt {

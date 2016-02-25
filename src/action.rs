@@ -14,7 +14,7 @@ use todo_item::TodoItem;
 use todo_items;
 use util;
 
-#[derive(Clone,Eq,Ord,PartialEq,PartialOrd)]
+#[derive(Clone,Debug,Eq,Ord,PartialEq,PartialOrd)]
 pub enum Action {
     Agenda,
     Delete,
