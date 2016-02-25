@@ -12,7 +12,7 @@ use opt::Opt;
 pub fn get_options() -> Options {
     let mut opts = Options::new();
     opts.optflag("a", "agenda", "show agenda");
-    opts.optopt("A", "agenda-days", "set agenda days", "DAYS#");
+    opts.optopt("A", "agenda-days", "set agenda days", "NUM");
     opts.optflag("D", "debug", "set debug mode");
     opts.optflag("d", "dump", "show raw todo items");
     opts.optflag("h", "help", "print this help");
@@ -41,7 +41,8 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options)
                 Ok(i)    => { opts.agenda_days = i; },
                 Err(err) => {
                     let err_msg =
-                        format!("Invalid argument to '--agenda-days': {}", err);
+                        format!("Invalid '--agenda-days' argument '{}': {}",
+                                id, err);
                     return Err(Error::new(ErrorKind::Other, err_msg));
                 },
             },
