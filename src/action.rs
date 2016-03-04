@@ -1,9 +1,11 @@
 // Copyright 2016 Tuomo Hartikainen <tth@harski.org>.
 // Licensed under the 2-clause BSD license, see LICENSE for details.
 
+use std::ffi::OsString;
 use std::fs;
-use std::rc::Rc;
 use std::ops::Add;
+use std::process::Command;
+use std::rc::Rc;
 
 use getopts::Options;
 use time;
@@ -19,6 +21,7 @@ pub enum Action {
     Agenda,
     Delete,
     Dump,
+    Edit,
     Help,
     Show,
     Today,
@@ -91,6 +94,42 @@ pub fn dump(items: &Vec<Rc<TodoItem>>) {
     for item in items {
         println!("{:?}", item);
     }
+}
+
+
+pub fn edit_item(items: &Vec<Rc<TodoItem>>,
+                 i: i32,
+                 editor: &Option<String>) {
+    match *editor {
+        Some(ref e) => {
+            if i != 0 {
+                // TODO: better error handling for the None case?
+                match todo_items::get_item_by_id(&items, i) {
+                    Some(item) => {
+                        // run editor command for item
+                        match Command::new(OsString::from(e))
+                                          .arg(&item.filename)
+                                          .status() {
+                            Ok(_)   => {},
+                            Err(e)  => {
+                                print_err!("Error: editor exited with status {}",
+                                           e);
+                            },
+                        };
+                    },
+                    None    =>
+                        print_err!("Error: cannot edit item {}: item not found",
+                                   i),
+                };
+            } else {
+                print_err!("Item ID not set");
+            }
+        },
+        None    => {
+            print_err!("Cannot edit item: neither VISUAL nor EDITOR is set.");
+            return;
+        },
+    };
 }
 
 

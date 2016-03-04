@@ -62,6 +62,8 @@ fn main() {
                 Action::Agenda  => { action::agenda(&opts, &items); },
                 Action::Delete  => { action::delete_item(&items, opts.item_id); },
                 Action::Dump    => { action::dump(&items); },
+                Action::Edit    => { action::edit_item(&items, opts.item_id,
+                                                       &opts.editor); },
                 Action::Show    => { action::show_item(&items, opts.item_id); },
                 Action::Today   => { action::print_today(&items); },
                 Action::TodayOnly   => { action::print_today_only(&items); },

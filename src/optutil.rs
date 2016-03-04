@@ -15,6 +15,7 @@ pub fn get_options() -> Options {
     opts.optopt("A", "agenda-days", "set agenda days", "NUM");
     opts.optflag("D", "debug", "set debug mode");
     opts.optflag("d", "dump", "show raw todo items");
+    opts.optflag("e", "edit", "edit item");
     opts.optflag("h", "help", "print this help");
     opts.optopt("i", "id", "select item by ID", "ID");
     opts.optflag("s", "show", "show item identified by -i");
@@ -53,6 +54,7 @@ pub fn parse_options(args: &Vec<String>, opts_in: &Options)
     if matches.opt_present("a") { opts.actions.push(Action::Agenda); }
     if matches.opt_present("D") { opts.debug = true; }
     if matches.opt_present("d") { opts.actions.push(Action::Dump); }
+    if matches.opt_present("e") { opts.actions.push(Action::Edit); }
     if matches.opt_present("h") { opts.actions.push(Action::Help); }
     if matches.opt_present("i") {
         match matches.opt_str("i") {

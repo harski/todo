@@ -11,6 +11,7 @@ pub struct Opt {
     pub actions:    Vec<Action>,
     pub agenda_days:i64,
     pub debug:      bool,
+    pub editor:     Option<String>,
     pub item_id:    i32,
     pub todo_dir:   PathBuf,
 }
@@ -23,6 +24,13 @@ impl Opt {
     }
 
     pub fn new() -> Opt {
+        // get editor
+        // TODO: get env visual or editor
+        let editor: Option<String> = env::var("VISUAL")
+                                        .or(env::var("EDITOR"))
+                                        .ok();
+
+        // get todo dir
         let mut todo_dir = match env::home_dir() {
             Some(path) => path,
             None => { panic!("Could not get home dir"); },
@@ -33,6 +41,7 @@ impl Opt {
             actions:    Vec::new(),
             agenda_days:8,
             debug:      false,
+            editor:     editor,
             item_id:    0,
             todo_dir:   todo_dir,
         }
