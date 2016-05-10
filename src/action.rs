@@ -3,13 +3,13 @@
 
 use std::ffi::OsString;
 use std::fs;
+use std::io::{Error, ErrorKind};
 use std::ops::Add;
 use std::process::Command;
 use std::rc::Rc;
 
 use getopts::Options;
 use time;
-use time::Tm;
 
 use opt::Opt;
 use todo_item::TodoItem;
@@ -99,37 +99,38 @@ pub fn dump(items: &Vec<Rc<TodoItem>>) {
 
 pub fn edit_item(items: &Vec<Rc<TodoItem>>,
                  i: i32,
-                 editor: &Option<String>) {
-    match *editor {
-        Some(ref e) => {
-            if i != 0 {
-                // TODO: better error handling for the None case?
-                match todo_items::get_item_by_id(&items, i) {
-                    Some(item) => {
-                        // run editor command for item
-                        match Command::new(OsString::from(e))
-                                          .arg(&item.filename)
-                                          .status() {
-                            Ok(_)   => {},
-                            Err(e)  => {
-                                print_err!("Error: editor exited with status {}",
-                                           e);
-                            },
-                        };
-                    },
-                    None    =>
-                        print_err!("Error: cannot edit item {}: item not found",
-                                   i),
-                };
-            } else {
-                print_err!("Item ID not set");
-            }
-        },
-        None    => {
-            print_err!("Cannot edit item: neither VISUAL nor EDITOR is set.");
-            return;
+                 editor: &Option<String>) -> Result<(), Error> {
+    if i == 0 {
+        return Err(Error::new(ErrorKind::Other, "Item ID not set"));
+    }
+
+    // TODO: improve error handling when editor is Some, but does not exist
+    let editor = match *editor {
+        Some(ref path)  => path,
+        None            => {
+            return Err(Error::new(ErrorKind::Other, "Editor not set"));
         },
     };
+
+    // TODO: better error handling for the None case?
+    match todo_items::get_item_by_id(&items, i) {
+        Some(item) => {
+            // run editor command for item
+            match Command::new(OsString::from(editor))
+                              .arg(&item.filename)
+                              .status() {
+                Ok(_)   => {},
+                Err(e)  => {
+                    print_err!("Error: editor exited with status {}",
+                               e);
+                },
+            };
+        },
+        None    =>
+            print_err!("Error: cannot edit item {}: item not found", i),
+    };
+
+    Ok(())
 }
 
 
