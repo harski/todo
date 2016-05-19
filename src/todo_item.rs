@@ -11,6 +11,7 @@ use time;
 use time::Tm;
 
 use attr::Attr;
+use error::{TodoError, TodoErrorKind, TodoResult};
 use status::{Status, parse_status_val};
 use util;
 
@@ -51,7 +52,7 @@ impl TodoItem {
     }
 
 
-    pub fn new_from_file(file: &Path, id: i32) -> Result<TodoItem, Error> {
+    pub fn new_from_file(file: &Path, id: i32) -> TodoResult<TodoItem> {
         let filename = file.to_str().unwrap();
 
         // init temporary TodoItem

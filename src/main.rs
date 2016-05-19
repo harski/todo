@@ -9,6 +9,7 @@ extern crate time;
 mod util;
 mod action;
 mod attr;
+mod error;
 mod opt;
 mod optutil;
 mod status;
