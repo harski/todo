@@ -24,8 +24,7 @@ impl Opt {
     }
 
     pub fn new() -> Opt {
-        // get editor
-        // TODO: get env visual or editor
+        // get env visual or editor
         let editor: Option<String> = env::var("VISUAL")
                                         .or(env::var("EDITOR"))
                                         .ok();

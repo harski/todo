@@ -101,14 +101,16 @@ pub fn edit_item(items: &Vec<Rc<TodoItem>>,
                  i: i32,
                  editor: &Option<String>) -> TodoResult<()> {
     if i == 0 {
-        return Err(TodoError::new(TodoErrorKind::Other, "Item ID not set".to_string()));
+        return Err(TodoError::new(TodoErrorKind::Other,
+                                  "Item ID not set".to_string()));
     }
 
     // TODO: improve error handling when editor is Some, but does not exist
     let editor = match *editor {
         Some(ref path)  => path,
         None            => {
-            return Err(TodoError::new(TodoErrorKind::Other, "Editor not set".to_string()));
+            return Err(TodoError::new(TodoErrorKind::Other,
+                                      "Editor not set".to_string()));
         },
     };
 

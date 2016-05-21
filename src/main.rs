@@ -47,8 +47,6 @@ fn main() {
         opts.dump();
     }
 
-    //let action = optutil::get_action(&opts_in, &args);
-
     // "trivial" actions, always return
     match action {
         Action::Help    => { action::print_help(&program, &opts_in); return; },

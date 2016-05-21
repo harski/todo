@@ -35,6 +35,7 @@ impl fmt::Display for TodoError {
 
 impl From<io::Error> for TodoError {
     fn from(err: io::Error) -> TodoError {
-        TodoError { kind: TodoErrorKind::Other, message: err.description().to_string() }
+        TodoError { kind: TodoErrorKind::Other,
+                    message: err.description().to_string() }
     }
 }
