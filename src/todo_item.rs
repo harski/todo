@@ -11,7 +11,7 @@ use time;
 use time::Tm;
 
 use attr::Attr;
-use error::{TodoError, TodoErrorKind, TodoResult};
+use error::TodoResult;
 use status::{Status, parse_status_val};
 use util;
 
