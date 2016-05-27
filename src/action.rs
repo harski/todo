@@ -3,7 +3,6 @@
 
 use std::ffi::OsString;
 use std::fs;
-use std::io::{Error, ErrorKind};
 use std::ops::Add;
 use std::process::Command;
 use std::rc::Rc;
@@ -11,6 +10,7 @@ use std::rc::Rc;
 use getopts::Options;
 use time;
 
+use error::{TodoError, TodoErrorKind, TodoResult};
 use opt::Opt;
 use todo_item::TodoItem;
 use todo_items;
@@ -99,16 +99,16 @@ pub fn dump(items: &Vec<Rc<TodoItem>>) {
 
 pub fn edit_item(items: &Vec<Rc<TodoItem>>,
                  i: i32,
-                 editor: &Option<String>) -> Result<(), Error> {
+                 editor: &Option<String>) -> TodoResult<()> {
     if i == 0 {
-        return Err(Error::new(ErrorKind::Other, "Item ID not set"));
+        return Err(TodoError::new(TodoErrorKind::Other, "Item ID not set".to_string()));
     }
 
     // TODO: improve error handling when editor is Some, but does not exist
     let editor = match *editor {
         Some(ref path)  => path,
         None            => {
-            return Err(Error::new(ErrorKind::Other, "Editor not set"));
+            return Err(TodoError::new(TodoErrorKind::Other, "Editor not set".to_string()));
         },
     };
 
