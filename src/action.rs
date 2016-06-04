@@ -70,15 +70,16 @@ pub fn agenda(opt: &Opt, items: &Vec<Rc<TodoItem>>) {
 }
 
 
-pub fn delete_item(items: &Vec<Rc<TodoItem>>, i: i32) {
+pub fn delete_item(mut items: &mut Vec<Rc<TodoItem>>, i: i32) {
     if i != 0 {
+        /* TODO: get_item to remove_item */
         match todo_items::get_item_by_id(&items, i) {
-            Some(i) => {
-                match fs::remove_file(&i.filename) {
-                    Ok(_)   => {},
+            Some(item) => {
+                match fs::remove_file(&item.filename) {
+                    Ok(_)   => { todo_items::remove_item_by_id(&mut items, i); },
                     Err(e)  =>
                         print_err!("Error: cannot delete item {}: {}",
-                                   i.id, e),
+                                   item.id, e),
                 };
             },
             None    =>

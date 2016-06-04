@@ -56,10 +56,10 @@ fn main() {
 
     // "proper" actions
     match get_todo_items(opts.todo_dir.as_path()) {
-        Ok(items)   => {
+        Ok(mut items)   => {
             match action {
                 Action::Agenda  => { action::agenda(&opts, &items); },
-                Action::Delete  => { action::delete_item(&items, opts.item_id); },
+                Action::Delete  => { action::delete_item(&mut items, opts.item_id); },
                 Action::Dump    => { action::dump(&items); },
                 Action::Edit    => {
                     match action::edit_item(&items, opts.item_id, &opts.editor) {

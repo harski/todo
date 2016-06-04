@@ -123,3 +123,8 @@ pub fn get_undone_items(items: &Vec<Rc<TodoItem>>) -> Vec<Rc<TodoItem>> {
     };
     undone
 }
+
+
+pub fn remove_item_by_id(items: &mut Vec<Rc<TodoItem>>, i: i32) -> Option<Rc<TodoItem>> {
+    items.iter().position(|ref p| p.id == i).map(|e| items.remove(e))
+}
