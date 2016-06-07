@@ -17,6 +17,7 @@ pub enum TodoErrorKind {
     Parse
 }
 
+
 impl TodoError {
     pub fn new(kind: TodoErrorKind, msg: String)
            -> TodoError {
@@ -27,11 +28,13 @@ impl TodoError {
     }
 }
 
+
 impl fmt::Display for TodoError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{})", self.message)
     }
 }
+
 
 impl From<io::Error> for TodoError {
     fn from(err: io::Error) -> TodoError {

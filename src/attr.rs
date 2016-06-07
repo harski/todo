@@ -24,16 +24,19 @@ impl Attr {
 
         let key = match validate_attr_entry(line_it.next()) {
             Some(key)   => key,
-            None        => { return Err(TodoError::new(
-                                            TodoErrorKind::Other,
-                                            "Not a valid attr line".to_string())); },
+            None        => {
+                return Err(TodoError::new(TodoErrorKind::Other,
+                                          "Not a valid attr line".to_string()));
+            },
         };
 
         let value = match validate_attr_entry(line_it.next()) {
             Some(value)   => value,
-                None        => { return Err(TodoError::new(
-                                                TodoErrorKind::Other,
-                                                "Not a valid attr line".to_string())); },
+                None        => {
+                    return Err(TodoError::new(TodoErrorKind::Other,
+                                              "Not a valid attr line"
+                                              .to_string()));
+                },
         };
 
         Ok(Attr::new(&key, &value))

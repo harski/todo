@@ -30,7 +30,9 @@ pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
             match entry {
                 Err(err) => println!("Error: {}", err),
                 Ok(dirent) => match dirent.file_type() {
-                    Err(err) => println!("could not find file type for file: {} ", err),
+                    Err(err) => println!("could not find file type for \
+                                         file '{}'",
+                                         err),
                     Ok(ft)   => if ft.is_file() { files.push(dirent.path()) },
                 },
             }
@@ -40,7 +42,8 @@ pub fn get_files_in_dir(dir: &Path) -> io::Result<Vec<PathBuf>> {
 }
 
 
-pub fn get_item_by_id(items: &Vec<Rc<TodoItem>>, i: i32) -> Option<Rc<TodoItem>> {
+pub fn get_item_by_id(items: &Vec<Rc<TodoItem>>, i: i32)
+                     -> Option<Rc<TodoItem>> {
     for item in items {
         if item.id == i {
             return Some(item.clone());
@@ -51,7 +54,7 @@ pub fn get_item_by_id(items: &Vec<Rc<TodoItem>>, i: i32) -> Option<Rc<TodoItem>>
 
 
 pub fn get_items_on_date(items: &Vec<Rc<TodoItem>>, date_str: &str)
-                            -> Vec<Rc<TodoItem>> {
+                        -> Vec<Rc<TodoItem>> {
     let mut today: Vec<Rc<TodoItem>> = Vec::new();
     for item in items {
         match item.get_date_str() {
@@ -80,6 +83,7 @@ pub fn get_items_after(items: &Vec<Rc<TodoItem>>, date_str: &str)
     list
 }
 
+
 pub fn get_items_before(items: &Vec<Rc<TodoItem>>, date_str: &str)
                        -> Vec<Rc<TodoItem>> {
     let mut list: Vec<Rc<TodoItem>> = Vec::new();
@@ -100,7 +104,8 @@ pub fn get_todo_items(path: &Path) -> io::Result<Vec<Rc<TodoItem>>> {
     for (id, file) in (1..).zip(files.iter()) {
         match TodoItem::new_from_file(&file, id) {
             Ok(i)   => items.push(Rc::new(i)),
-            Err(err)=> print_err!("Could not load todo file '{:?}': {}", file, err),
+            Err(err)=> print_err!("Could not load todo file '{:?}': {}",
+                                  file, err),
         };
     };
 
@@ -125,6 +130,7 @@ pub fn get_undone_items(items: &Vec<Rc<TodoItem>>) -> Vec<Rc<TodoItem>> {
 }
 
 
-pub fn remove_item_by_id(items: &mut Vec<Rc<TodoItem>>, i: i32) -> Option<Rc<TodoItem>> {
+pub fn remove_item_by_id(items: &mut Vec<Rc<TodoItem>>, i: i32)
+                        -> Option<Rc<TodoItem>> {
     items.iter().position(|ref p| p.id == i).map(|e| items.remove(e))
 }
